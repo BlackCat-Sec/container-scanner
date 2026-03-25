@@ -1,0 +1,45 @@
+{
+  "schema": "container-scanner-advisory-db/v1",
+  "advisories": [
+    {
+      "id": "PYSEC-TEST-0001",
+      "package": {
+        "ecosystem": "PyPI",
+        "name": "requests",
+        "version": "2.19.0"
+      },
+      "aliases": [
+        "CVE-2018-18074"
+      ],
+      "severity": "HIGH",
+      "summary": "Session fixation issue in requests proxy handling.",
+      "fix_versions": [
+        "2.20.0"
+      ],
+      "references": [
+        "https://osv.dev/vulnerability/PYSEC-2018-28"
+      ],
+      "source": "local-advisory-db"
+    },
+    {
+      "id": "GHSA-TEST-0002",
+      "package": {
+        "ecosystem": "npm",
+        "name": "lodash",
+        "version": "4.17.20"
+      },
+      "aliases": [
+        "CVE-2021-23337"
+      ],
+      "severity": "HIGH",
+      "summary": "Command injection issue in lodash templating helpers.",
+      "fix_versions": [
+        "4.17.21"
+      ],
+      "references": [
+        "https://osv.dev/vulnerability/GHSA-35jh-r3h4-6jhm"
+      ],
+      "source": "local-advisory-db"
+    }
+  ]
+}
