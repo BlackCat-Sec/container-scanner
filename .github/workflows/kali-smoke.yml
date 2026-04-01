@@ -1,0 +1,65 @@
+name: kali-smoke
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/kali-smoke.yml"
+      - "install_kali.sh"
+      - "run_kali.sh"
+      - "main.py"
+      - "scanner/**"
+      - "utils/**"
+      - "requirements.txt"
+      - "smoke_cli.py"
+      - "tests/**"
+
+jobs:
+  kali-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Kali smoke test
+        run: |
+          docker run --rm \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            kalilinux/kali-rolling \
+            bash -lc '
+              set -euo pipefail
+              export DEBIAN_FRONTEND=noninteractive
+
+              apt-get update
+              apt-get install -y git python3 python3-pip python3-venv ca-certificates
+
+              bash install_kali.sh
+              "$HOME/.local/bin/container-scanner" --help
+              "$HOME/.local/bin/container-scanner" \
+                --path tests/fixtures/sample_project \
+                --offline \
+                --advisory-db tests/fixtures/sample_advisories.json
+              "$HOME/.local/bin/container-scanner" \
+                --sbom tests/fixtures/sample_sbom_cyclonedx.json \
+                --offline \
+                --advisory-db tests/fixtures/sample_advisories.json \
+                --json > /tmp/container-scanner-report.json
+
+              rm -rf /tmp/kali-git-project
+              cp -R tests/fixtures/sample_project /tmp/kali-git-project
+              git -C /tmp/kali-git-project init
+              git -C /tmp/kali-git-project config user.email "kali-smoke@example.com"
+              git -C /tmp/kali-git-project config user.name "Kali Smoke"
+              git -C /tmp/kali-git-project add .
+              git -C /tmp/kali-git-project commit -m "fixture"
+
+              "$HOME/.local/bin/container-scanner" \
+                --git-url /tmp/kali-git-project \
+                --offline \
+                --advisory-db tests/fixtures/sample_advisories.json
+
+              .venv/bin/python -m pytest -q
+              .venv/bin/python smoke_cli.py
+            '
