@@ -18,6 +18,22 @@ Use `container-scanner` when you need a fast security-oriented view of a codebas
 
 This tool is intended for lightweight dependency and code-risk assessment. It is useful for triage, offline review, lab environments, CI checks, and repeatable Kali workflows.
 
+## How This Helps In Practice
+
+`container-scanner` is most useful when you need a fast decision tool rather than a full security platform rollout.
+
+- For developers, it helps catch risky dependencies and insecure coding patterns before shipping code.
+- For security engineers, it helps triage unknown repositories quickly and decide where deeper review is needed.
+- For Kali workflows, it gives a simple local command that works well in lab environments, short assessments, and repeatable verification tasks.
+- For CI usage, it gives a compact summary for humans and a JSON payload for automation.
+
+In practical terms, the tool helps answer questions like:
+
+- Does this project depend on packages with known vulnerabilities?
+- Are there obvious risky coding patterns such as `shell=True`, disabled TLS verification, or weak hashing?
+- Is this repository worth escalating for manual review?
+- Can I scan this target offline in a controlled environment?
+
 ## How It Works
 
 Each scan follows the same high-level flow:
@@ -265,6 +281,17 @@ Text output then shows:
 - a vulnerability table with package, version, advisory ID, severity, and fix version when available
 - a risk issue table with severity, rule ID, file path, line number, and title
 - warning lines when the scan could not complete a non-fatal step
+
+## How To Read The Results
+
+Use the output in this order:
+
+1. Check the top summary line to understand the overall score, severity band, dependency count, vulnerability count, and issue count.
+2. Review the vulnerability table to identify packages that need patching or version upgrades.
+3. Review the risk issue table to find code patterns that should be fixed or manually reviewed.
+4. Review warnings last, because they indicate partial visibility or non-fatal scan problems.
+
+A high score does not always mean the target is immediately exploitable, but it does mean the target deserves faster review and remediation. A low score does not prove the target is safe; it only means this scanner found fewer issues within its coverage.
 
 ## How Risk Scoring Works
 
